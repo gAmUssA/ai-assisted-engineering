@@ -21,24 +21,44 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Build job
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: 📂 Checkout
-        uses: actions/checkout@v4
+    - name: 📂 Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
         
-      - name: 🔧 Setup Pages
-        uses: actions/configure-pages@v4
+    - name: 🎥 Generate config.js from YouTube URLs
+      run: |
+        echo "🔍 Checking for URLs file..."
+        if [ -f "urls.txt" ]; then
+          echo "📹 Found urls.txt, generating config.js..."
+          node generate-config.js urls.txt
+          echo "✅ Config generation complete!"
+        elif [ -f "sample-urls.txt" ]; then
+          echo "📹 Found sample-urls.txt, generating config.js..."
+          node generate-config.js sample-urls.txt
+          echo "✅ Config generation complete!"
+        else
+          echo "⚠️ No URLs file found, using existing config.js"
+        fi
         
-      - name: 📦 Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./
-          destination: ./_site
+    - name: 🔧 Setup Pages
+      uses: actions/configure-pages@v4
+        
+    - name: 📦 Build with Jekyll
+      uses: actions/jekyll-build-pages@v1
+      with:
+        source: ./
+        destination: ./_site
           
-      - name: 📤 Upload artifact
-        uses: actions/upload-pages-artifact@v3
+    - name: 📤 Upload artifact
+      uses: actions/upload-pages-artifact@v3
 
   # Deployment job
   deploy:
@@ -46,7 +66,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-and-deploy
     steps:
       - name: 🚀 Deploy to GitHub Pages
         id: deployment

@@ -1,11 +1,209 @@
 // Main JavaScript functionality
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the application
+    initializeSiteContent();
     initializeVideoGrid();
+    updateVideosSection();
     initializeSmoothScrolling();
     initializeModal();
     initializeAnimations();
 });
+
+// Initialize site content from configuration
+function initializeSiteContent() {
+    if (typeof siteConfig === 'undefined') {
+        console.warn('Site configuration not loaded, using default content');
+        return;
+    }
+
+    // Update meta tags
+    document.title = siteConfig.meta.title;
+    updateMetaTag('description', siteConfig.meta.description);
+    updateMetaTag('keywords', siteConfig.meta.keywords);
+    updateMetaTag('author', siteConfig.meta.author);
+    
+    // Update Open Graph tags
+    updateMetaTag('og:title', siteConfig.meta.title, 'property');
+    updateMetaTag('og:description', siteConfig.meta.description, 'property');
+    updateMetaTag('og:url', siteConfig.meta.url, 'property');
+    
+    // Update Twitter Card tags
+    updateMetaTag('twitter:title', siteConfig.meta.title);
+    updateMetaTag('twitter:description', siteConfig.meta.description);
+
+    // Update navigation
+    updateNavigation();
+    
+    // Update hero section
+    updateHeroSection();
+    
+    // Update about section
+    updateAboutSection();
+    
+    // Update footer
+    updateFooter();
+}
+
+// Helper function to update meta tags
+function updateMetaTag(name, content, attribute = 'name') {
+    let meta = document.querySelector(`meta[${attribute}="${name}"]`);
+    if (meta) {
+        meta.setAttribute('content', content);
+    } else {
+        meta = document.createElement('meta');
+        meta.setAttribute(attribute, name);
+        meta.setAttribute('content', content);
+        document.head.appendChild(meta);
+    }
+}
+
+// Update navigation content
+function updateNavigation() {
+    const brandElement = document.querySelector('.navbar-brand');
+    if (brandElement && siteConfig.nav.brand) {
+        brandElement.textContent = siteConfig.nav.brand;
+    }
+    
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    siteConfig.nav.links.forEach((link, index) => {
+        if (navLinks[index]) {
+            navLinks[index].textContent = link.text;
+            navLinks[index].setAttribute('href', link.href);
+        }
+    });
+}
+
+// Update hero section content
+function updateHeroSection() {
+    const titleElement = document.querySelector('.hero-title');
+    const subtitleElement = document.querySelector('.hero-subtitle');
+    const primaryBtn = document.querySelector('.btn-primary');
+    const secondaryBtn = document.querySelector('.btn-outline-light');
+    
+    if (titleElement) {
+        titleElement.innerHTML = `${siteConfig.hero.title} <span class="gradient-text">${siteConfig.hero.titleHighlight}</span>`;
+    }
+    
+    if (subtitleElement) {
+        subtitleElement.textContent = siteConfig.hero.subtitle;
+    }
+    
+    if (primaryBtn) {
+        primaryBtn.textContent = siteConfig.hero.primaryButton.text;
+        primaryBtn.setAttribute('href', siteConfig.hero.primaryButton.href);
+    }
+    
+    if (secondaryBtn) {
+        secondaryBtn.textContent = siteConfig.hero.secondaryButton.text;
+        secondaryBtn.setAttribute('href', siteConfig.hero.secondaryButton.href);
+    }
+    
+    // Update code snippet
+    const codeElement = document.querySelector('.code-snippet code');
+    if (codeElement && siteConfig.hero.codeSnippet) {
+        const codeContent = [
+            siteConfig.hero.codeSnippet.comment,
+            ...siteConfig.hero.codeSnippet.lines
+        ].join('\n');
+        codeElement.textContent = codeContent;
+    }
+}
+
+// Update about section content
+function updateAboutSection() {
+    const aboutTitle = document.querySelector('#about h2');
+    const aboutSubtitle = document.querySelector('#about .section-subtitle');
+    
+    if (aboutTitle) {
+        aboutTitle.textContent = siteConfig.about.title;
+    }
+    
+    if (aboutSubtitle) {
+        aboutSubtitle.textContent = siteConfig.about.subtitle;
+    }
+    
+    // Update features
+    const featureCards = document.querySelectorAll('.feature-card');
+    siteConfig.about.features.forEach((feature, index) => {
+        if (featureCards[index]) {
+            const icon = featureCards[index].querySelector('.feature-icon');
+            const title = featureCards[index].querySelector('h4');
+            const description = featureCards[index].querySelector('p');
+            
+            if (icon) icon.textContent = feature.icon;
+            if (title) title.textContent = feature.title;
+            if (description) description.textContent = feature.description;
+        }
+    });
+    
+    // Update stats
+    const statNumbers = document.querySelectorAll('.stat-number');
+    const statLabels = document.querySelectorAll('.stat-label');
+    
+    siteConfig.about.stats.forEach((stat, index) => {
+        if (statNumbers[index]) statNumbers[index].textContent = stat.number;
+        if (statLabels[index]) statLabels[index].textContent = stat.label;
+    });
+}
+
+// Update footer content
+function updateFooter() {
+    const footerBrand = document.querySelector('.footer-brand h5');
+    const footerTagline = document.querySelector('.footer-brand p');
+    const copyright = document.querySelector('.footer-bottom p');
+    
+    if (footerBrand) {
+        footerBrand.textContent = siteConfig.footer.brand.name;
+    }
+    
+    if (footerTagline) {
+        footerTagline.textContent = siteConfig.footer.brand.tagline;
+    }
+    
+    if (copyright) {
+        copyright.innerHTML = `${siteConfig.footer.copyright}<br><small class="text-muted">${siteConfig.footer.builtWith}</small>`;
+    }
+    
+    // Update footer sections
+    const footerSections = document.querySelectorAll('.footer-section');
+    siteConfig.footer.sections.forEach((section, index) => {
+        if (footerSections[index]) {
+            const title = footerSections[index].querySelector('h6');
+            const linksList = footerSections[index].querySelector('ul');
+            
+            if (title) {
+                title.textContent = section.title;
+            }
+            
+            if (linksList) {
+                linksList.innerHTML = '';
+                section.links.forEach(link => {
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.href = link.href;
+                    a.textContent = link.text;
+                    a.className = 'text-light text-decoration-none';
+                    li.appendChild(a);
+                    linksList.appendChild(li);
+                });
+            }
+        }
+    });
+}
+
+// Update videos section title
+function updateVideosSection() {
+    const videosTitle = document.querySelector('#videos h2');
+    const videosSubtitle = document.querySelector('#videos .section-subtitle');
+    
+    if (videosTitle && siteConfig.videos) {
+        videosTitle.textContent = siteConfig.videos.title;
+    }
+    
+    if (videosSubtitle && siteConfig.videos) {
+        videosSubtitle.textContent = siteConfig.videos.subtitle;
+    }
+}
 
 // Video Grid Initialization
 function initializeVideoGrid() {

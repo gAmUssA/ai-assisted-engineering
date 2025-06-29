@@ -123,14 +123,14 @@ config: ## 🎥 Generate config.js from YouTube URLs file
 	@echo "$(PURPLE)🎥 Generating config.js from YouTube URLs...$(RESET)"
 	@if [ ! -f "urls.txt" ] && [ ! -f "sample-urls.txt" ]; then \
 		echo "$(YELLOW)📝 Creating sample URLs file...$(RESET)"; \
-		python3 generate-config.py --sample; \
+		node generate-config.js --sample; \
 		echo "$(BLUE)💡 Edit sample-urls.txt with your YouTube URLs, then run 'make config' again$(RESET)"; \
 	elif [ -f "urls.txt" ]; then \
 		echo "$(BLUE)🔍 Processing urls.txt...$(RESET)"; \
-		python3 generate-config.py urls.txt; \
+		node generate-config.js urls.txt; \
 	else \
 		echo "$(BLUE)🔍 Processing sample-urls.txt...$(RESET)"; \
-		python3 generate-config.py sample-urls.txt; \
+		node generate-config.js sample-urls.txt; \
 	fi
 	@echo "$(GREEN)✅ Config generation complete!$(RESET)"
 
