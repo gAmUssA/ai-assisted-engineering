@@ -1,0 +1,14 @@
+# YouTube URLs for AI-Assisted Engineering
+# Add one URL per line, comments start with #
+
+# Example URLs (replace with your actual videos):
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
+https://youtu.be/dQw4w9WgXcQ
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+# You can also add comments to organize your videos:
+# GitHub Copilot tutorials:
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+# Windsurf IDE tutorials:
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
