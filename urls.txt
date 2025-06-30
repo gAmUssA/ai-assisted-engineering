@@ -1,5 +1,6 @@
 # Viktor at AgentCon 2025 in San Francisco
-https://youtu.be/nTC00iE3aNs
+# commented until good thumbnail is available
+# https://youtu.be/nTC00iE3aNs
 
 # Robocoders, Devoxx Poland
 https://youtu.be/u6dWLYQHpkg

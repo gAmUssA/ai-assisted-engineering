@@ -3,12 +3,6 @@
 // Add your YouTube video IDs and details here
 const videoConfig = [
     {
-        "id": "nTC00iE3aNs",
-        "title": "Why Your Agents Need Events, Not Endpoints | AgentCon 2025",
-        "description": "Learn from Viktor Gamov's tutorial on why your agents need events, not endpoints | agentcon 2025. Master AI-powered development techniques.",
-        "thumbnail": "https://img.youtube.com/vi/nTC00iE3aNs/maxresdefault.jpg"
-    },
-    {
         "id": "u6dWLYQHpkg",
         "title": "RoboCoders: Judgment Day – AI IDEs Face Off | Devoxx Poland 2025",
         "description": "Learn from Viktor Gamov's tutorial on robocoders: judgment day – ai ides face off | devoxx poland 2025. Master AI-powered development techniques.",
