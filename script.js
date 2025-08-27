@@ -206,7 +206,7 @@ function updateVideosSection() {
 }
 
 // Video Grid Initialization
-async function initializeVideoGrid() {
+function initializeVideoGrid() {
     const videoGrid = document.getElementById('videoGrid');
     
     if (!videoGrid || !videoConfig) {
@@ -217,11 +217,8 @@ async function initializeVideoGrid() {
     // Clear existing content
     videoGrid.innerHTML = '';
 
-    // Fetch metadata for all videos and update config
-    const updatedVideoConfig = await fetchAllVideoMetadata(videoConfig);
-
-    // Generate video cards with updated metadata
-    updatedVideoConfig.forEach((video, index) => {
+    // Generate video cards directly from config (descriptions already fetched)
+    videoConfig.forEach((video, index) => {
         const videoCard = createVideoCard(video, index);
         videoGrid.appendChild(videoCard);
     });
@@ -431,7 +428,10 @@ function safeQuerySelector(selector) {
 // YouTube Metadata Fetching Functions
 async function fetchVideoMetadata(videoId) {
     try {
-        // Use YouTube oEmbed API (no API key required)
+        // First try to get description from YouTube page scraping (no API key needed)
+        const description = await fetchVideoDescription(videoId);
+        
+        // Use YouTube oEmbed API for title and author
         const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
         const response = await fetch(oEmbedUrl);
         
@@ -443,7 +443,7 @@ async function fetchVideoMetadata(videoId) {
         
         return {
             title: data.title || 'Untitled Video',
-            description: data.author_name ? `By ${data.author_name}` : 'No description available',
+            description: description || 'No description available',
             thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
         };
     } catch (error) {
@@ -455,6 +455,37 @@ async function fetchVideoMetadata(videoId) {
             description: 'Description unavailable',
             thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
         };
+    }
+}
+
+// Fetch video description from YouTube page
+async function fetchVideoDescription(videoId) {
+    try {
+        // Use a CORS proxy to fetch YouTube page content
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${videoId}`)}`;
+        const response = await fetch(proxyUrl);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        const htmlContent = data.contents;
+        
+        // Extract description from meta tag
+        const descriptionMatch = htmlContent.match(/<meta name="description" content="([^"]*)"[^>]*>/);
+        if (descriptionMatch && descriptionMatch[1]) {
+            let description = descriptionMatch[1];
+            // Decode HTML entities
+            description = description.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+            // Truncate to reasonable length
+            return description.length > 150 ? description.substring(0, 150) + '...' : description;
+        }
+        
+        return null;
+    } catch (error) {
+        console.warn(`Failed to fetch description for video ${videoId}:`, error);
+        return null;
     }
 }
 

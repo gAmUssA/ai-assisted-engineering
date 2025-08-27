@@ -33,17 +33,13 @@ jobs:
       with:
         node-version: '18'
         
-    - name: 🎥 Generate config.js from YouTube URLs
+    - name: 🎥 Generate config.js from YouTube URLs with metadata
       run: |
         echo "🔍 Checking for URLs file..."
         if [ -f "urls.txt" ]; then
-          echo "📹 Found urls.txt, generating config.js..."
-          node generate-config.js urls.txt
-          echo "✅ Config generation complete!"
-        elif [ -f "sample-urls.txt" ]; then
-          echo "📹 Found sample-urls.txt, generating config.js..."
-          node generate-config.js sample-urls.txt
-          echo "✅ Config generation complete!"
+          echo "📹 Found urls.txt, generating config.js with metadata..."
+          node generate-video-config.js
+          echo "✅ Config generation with metadata complete!"
         else
           echo "⚠️ No URLs file found, using existing config.js"
         fi

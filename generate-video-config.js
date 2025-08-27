@@ -24,12 +24,12 @@ function extractVideoId(url) {
     return null;
 }
 
-// Fetch video metadata from YouTube oEmbed API
-async function fetchVideoMetadata(videoId) {
-    return new Promise((resolve, reject) => {
-        const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+// Fetch video description from YouTube page
+async function fetchVideoDescription(videoId) {
+    return new Promise((resolve) => {
+        const url = `https://www.youtube.com/watch?v=${videoId}`;
         
-        https.get(oEmbedUrl, (res) => {
+        https.get(url, (res) => {
             let data = '';
             
             res.on('data', (chunk) => {
@@ -38,29 +38,79 @@ async function fetchVideoMetadata(videoId) {
             
             res.on('end', () => {
                 try {
-                    const parsed = JSON.parse(data);
-                    resolve({
-                        title: parsed.title || 'Untitled Video',
-                        description: parsed.author_name ? `By ${parsed.author_name}` : 'No description available',
-                        thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
-                    });
+                    // Extract description from meta tag
+                    const descriptionMatch = data.match(/<meta name="description" content="([^"]*)"[^>]*>/);
+                    if (descriptionMatch && descriptionMatch[1]) {
+                        let description = descriptionMatch[1];
+                        // Decode HTML entities
+                        description = description.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+                        // Truncate to reasonable length
+                        resolve(description.length > 150 ? description.substring(0, 150) + '...' : description);
+                        return;
+                    }
+                    resolve(null);
                 } catch (error) {
-                    console.warn(`Failed to parse metadata for ${videoId}:`, error.message);
-                    resolve({
-                        title: 'Video Title Unavailable',
-                        description: 'Description unavailable',
-                        thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
-                    });
+                    console.warn(`Failed to parse description for ${videoId}:`, error.message);
+                    resolve(null);
                 }
             });
         }).on('error', (error) => {
+            console.warn(`Failed to fetch description for ${videoId}:`, error.message);
+            resolve(null);
+        });
+    });
+}
+
+// Fetch video metadata from YouTube oEmbed API
+async function fetchVideoMetadata(videoId) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // First try to get description
+            const description = await fetchVideoDescription(videoId);
+            
+            // Then get title from oEmbed API
+            const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+            
+            https.get(oEmbedUrl, (res) => {
+                let data = '';
+                
+                res.on('data', (chunk) => {
+                    data += chunk;
+                });
+                
+                res.on('end', () => {
+                    try {
+                        const parsed = JSON.parse(data);
+                        resolve({
+                            title: parsed.title || 'Untitled Video',
+                            description: description || 'No description available',
+                            thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+                        });
+                    } catch (error) {
+                        console.warn(`Failed to parse metadata for ${videoId}:`, error.message);
+                        resolve({
+                            title: 'Video Title Unavailable',
+                            description: description || 'Description unavailable',
+                            thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+                        });
+                    }
+                });
+            }).on('error', (error) => {
+                console.warn(`Failed to fetch oEmbed for ${videoId}:`, error.message);
+                resolve({
+                    title: 'Video Title Unavailable',
+                    description: description || 'Description unavailable',
+                    thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+                });
+            });
+        } catch (error) {
             console.warn(`Failed to fetch metadata for ${videoId}:`, error.message);
             resolve({
                 title: 'Video Title Unavailable',
                 description: 'Description unavailable',
                 thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
             });
-        });
+        }
     });
 }
 
