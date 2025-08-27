@@ -33,15 +33,28 @@ jobs:
       with:
         node-version: '18'
         
-    - name: 🎥 Generate config.js from YouTube URLs with metadata
+    - name: 🎥 Verify config.js exists with video metadata
       run: |
-        echo "🔍 Checking for URLs file..."
-        if [ -f "urls.txt" ]; then
-          echo "📹 Found urls.txt, generating config.js with metadata..."
-          node generate-video-config.js
-          echo "✅ Config generation with metadata complete!"
+        echo "🔍 Checking config.js..."
+        if [ -f "config.js" ]; then
+          echo "✅ Found config.js, checking for video data..."
+          if grep -q "videoConfig" config.js; then
+            echo "✅ Video configuration found in config.js"
+            # Show first video title to verify content
+            grep -A 2 "title" config.js | head -3
+          else
+            echo "⚠️ No video configuration found, generating from URLs..."
+            if [ -f "urls.txt" ]; then
+              node generate-video-config.js
+            fi
+          fi
         else
-          echo "⚠️ No URLs file found, using existing config.js"
+          echo "❌ config.js not found, generating from URLs..."
+          if [ -f "urls.txt" ]; then
+            node generate-video-config.js
+          else
+            echo "❌ No urls.txt found either, deployment may fail"
+          fi
         fi
         
     - name: 🔧 Setup Pages
