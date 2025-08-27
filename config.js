@@ -11,13 +11,13 @@ const videoConfig = [
     {
         "id": "u6dWLYQHpkg",
         "title": "RoboCoders: Judgment Day – AI IDEs Face Off | Devoxx Poland 2025",
-        "description": "recorded at https://devoxx.pl/talk-details/?id=1552 with @jbaruch Can AI-powered IDEs take software development to the next level? Unlike traditional ...",
+        "description": "Can AI-powered IDEs take software development to the next level? Unlike traditional code assistants that provide suggestions or guidance, AI-driven ID...",
         "thumbnail": "https://img.youtube.com/vi/u6dWLYQHpkg/maxresdefault.jpg"
     },
     {
         "id": "5q_LQNMIvqY",
         "title": "RoboCoders: Judgment Day – AI IDEs Face Off | AI Fokus 2025",
-        "description": "Recorded at AI Fokus https://www.jfokus.se/ai-fokus/talks/2555 with @jbaruch Can AI-powered IDEs take software development to the next level? Unlike t...",
+        "description": "Unlike traditional code assistants that provide suggestions or guidance, AI-driven IDEs like VS Code @GitHub Copilot and Windsurf promise to act as fu...",
         "thumbnail": "https://img.youtube.com/vi/5q_LQNMIvqY/maxresdefault.jpg"
     },
     {
@@ -29,7 +29,7 @@ const videoConfig = [
     {
         "id": "lkMhqEyjfXs",
         "title": "Codepocalypse Now: LangChain4j vs. Spring AI | #Devoxx France",
-        "description": "A deep dive presentation recorded at @DevoxxFRvideos together with @jbaruch ----Codepocalypse Now: LangChain4j vs. Spring AIWhich Java framework handl...",
+        "description": "Codepocalypse Now: LangChain4j vs. Spring AIWhich Java framework handles AI better: LangChain4j or Spring AI? In this live coding showdown, we’ll buil...",
         "thumbnail": "https://img.youtube.com/vi/lkMhqEyjfXs/maxresdefault.jpg"
     }
 ];
