@@ -119,20 +119,17 @@ clean: ## 🧹 Clean up generated files
 	@rm -f styles.min.css script.min.js
 	@echo "$(GREEN)✅ Cleanup completed!$(RESET)"
 
-config: ## 🎥 Generate config.js from YouTube URLs file
-	@echo "$(PURPLE)🎥 Generating config.js from YouTube URLs...$(RESET)"
-	@if [ ! -f "urls.txt" ] && [ ! -f "sample-urls.txt" ]; then \
-		echo "$(YELLOW)📝 Creating sample URLs file...$(RESET)"; \
-		node generate-config.js --sample; \
-		echo "$(BLUE)💡 Edit sample-urls.txt with your YouTube URLs, then run 'make config' again$(RESET)"; \
-	elif [ -f "urls.txt" ]; then \
-		echo "$(BLUE)🔍 Processing urls.txt...$(RESET)"; \
-		node generate-config.js urls.txt; \
+config: ## 🎥 Generate config.js from YouTube URLs with metadata
+	@echo "$(PURPLE)🎥 Generating video config with YouTube metadata...$(RESET)"
+	@if [ -f "urls.txt" ]; then \
+		echo "$(BLUE)🔍 Processing urls.txt with metadata fetching...$(RESET)"; \
+		node generate-video-config.js; \
+		echo "$(GREEN)✅ Video config updated with real YouTube metadata!$(RESET)"; \
 	else \
-		echo "$(BLUE)🔍 Processing sample-urls.txt...$(RESET)"; \
-		node generate-config.js sample-urls.txt; \
+		echo "$(RED)❌ urls.txt not found$(RESET)"; \
+		echo "$(YELLOW)💡 Create urls.txt with your YouTube URLs$(RESET)"; \
+		exit 1; \
 	fi
-	@echo "$(GREEN)✅ Config generation complete!$(RESET)"
 
 update-videos: ## 🎥 Update video configuration (interactive)
 	@echo "$(PURPLE)🎥 Video Configuration Helper$(RESET)"

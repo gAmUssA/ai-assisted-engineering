@@ -206,7 +206,7 @@ function updateVideosSection() {
 }
 
 // Video Grid Initialization
-function initializeVideoGrid() {
+async function initializeVideoGrid() {
     const videoGrid = document.getElementById('videoGrid');
     
     if (!videoGrid || !videoConfig) {
@@ -217,8 +217,11 @@ function initializeVideoGrid() {
     // Clear existing content
     videoGrid.innerHTML = '';
 
-    // Generate video cards
-    videoConfig.forEach((video, index) => {
+    // Fetch metadata for all videos and update config
+    const updatedVideoConfig = await fetchAllVideoMetadata(videoConfig);
+
+    // Generate video cards with updated metadata
+    updatedVideoConfig.forEach((video, index) => {
         const videoCard = createVideoCard(video, index);
         videoGrid.appendChild(videoCard);
     });
@@ -325,6 +328,9 @@ function openVideoModal(video) {
     const modalIframe = document.getElementById('modalIframe');
     
     if (modal && modalIframe) {
+        // Track video play event
+        trackVideoPlay(video.id, video.title);
+        
         // Set iframe source to YouTube embed URL
         const embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0`;
         modalIframe.src = embedUrl;
@@ -422,16 +428,111 @@ function safeQuerySelector(selector) {
     return element;
 }
 
+// YouTube Metadata Fetching Functions
+async function fetchVideoMetadata(videoId) {
+    try {
+        // Use YouTube oEmbed API (no API key required)
+        const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+        const response = await fetch(oEmbedUrl);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        return {
+            title: data.title || 'Untitled Video',
+            description: data.author_name ? `By ${data.author_name}` : 'No description available',
+            thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+        };
+    } catch (error) {
+        console.warn(`Failed to fetch metadata for video ${videoId}:`, error);
+        
+        // Fallback to default values
+        return {
+            title: 'Video Title Unavailable',
+            description: 'Description unavailable',
+            thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+        };
+    }
+}
+
+async function fetchAllVideoMetadata(videos) {
+    const updatedVideos = [];
+    
+    for (const video of videos) {
+        try {
+            const metadata = await fetchVideoMetadata(video.id);
+            
+            updatedVideos.push({
+                ...video,
+                title: metadata.title,
+                description: metadata.description,
+                thumbnail: metadata.thumbnail
+            });
+            
+            // Add small delay to avoid rate limiting
+            await new Promise(resolve => setTimeout(resolve, 100));
+        } catch (error) {
+            console.warn(`Error processing video ${video.id}:`, error);
+            // Keep original video data if fetch fails
+            updatedVideos.push(video);
+        }
+    }
+    
+    return updatedVideos;
+}
+
+// Enhanced video metadata fetching with YouTube Data API v3 (requires API key)
+async function fetchEnhancedVideoMetadata(videoId, apiKey) {
+    try {
+        const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${apiKey}&part=snippet,statistics`;
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.items && data.items.length > 0) {
+            const video = data.items[0];
+            const snippet = video.snippet;
+            
+            return {
+                title: snippet.title,
+                description: snippet.description.substring(0, 150) + '...',
+                thumbnail: snippet.thumbnails.maxres?.url || snippet.thumbnails.high?.url || `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                publishedAt: snippet.publishedAt,
+                channelTitle: snippet.channelTitle,
+                viewCount: video.statistics?.viewCount,
+                likeCount: video.statistics?.likeCount
+            };
+        }
+        
+        throw new Error('No video data found');
+    } catch (error) {
+        console.warn(`Failed to fetch enhanced metadata for video ${videoId}:`, error);
+        // Fallback to basic oEmbed API
+        return await fetchVideoMetadata(videoId);
+    }
+}
+
 // Analytics tracking (placeholder for future implementation)
 function trackVideoPlay(videoId, videoTitle) {
     // Placeholder for analytics tracking
     console.log(`Video played: ${videoTitle} (ID: ${videoId})`);
     
-    // Example: Google Analytics event tracking
-    // gtag('event', 'video_play', {
-    //     'video_title': videoTitle,
-    //     'video_id': videoId
-    // });
+    // Google Analytics event tracking with gtag
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'video_play', {
+            'video_title': videoTitle,
+            'video_id': videoId,
+            'event_category': 'Video',
+            'event_label': videoTitle
+        });
+    }
 }
 
 // Add CSS animations dynamically
