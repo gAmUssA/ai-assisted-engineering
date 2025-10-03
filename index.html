@@ -44,6 +44,7 @@
             <div class="nav-links">
                 <a href="#home" class="nav-link">Home</a>
                 <a href="#videos" class="nav-link">Videos</a>
+                <a href="#events" class="nav-link">Events</a>
                 <a href="#about" class="nav-link">About</a>
             </div>
         </div>
@@ -68,7 +69,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </a>
-                    <a href="#about" class="btn btn-secondary">Learn More</a>
+                    <a href="#events" class="btn btn-secondary btn-events">
+                        Meet Us Live
+                        <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 20px; height: 20px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </a>
                 </div>
             </div>
             <div class="hero-visual">
@@ -113,6 +119,21 @@
             </div>
             <div class="video-grid" id="videoGrid">
                 <!-- Videos will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Upcoming Events Section -->
+    <section id="events" class="events">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Upcoming Events</h2>
+                <p class="section-subtitle">
+                    Join me at these conferences and meetups around the world
+                </p>
+            </div>
+            <div class="events-grid" id="eventsGrid">
+                <!-- Events will be dynamically loaded here -->
             </div>
         </div>
     </section>
@@ -216,6 +237,7 @@
     <!-- Scripts -->
     <script src="site-config.js"></script>
     <script src="config.js"></script>
+    <script src="events-config.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

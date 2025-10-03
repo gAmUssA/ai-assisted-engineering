@@ -16,9 +16,10 @@ const siteConfig = {
     nav: {
         brand: "AI-Assisted Engineering",
         links: [
+            { text: "Home", href: "#home" },
             { text: "Videos", href: "#videos" },
-            { text: "About", href: "#about" },
-            { text: "Resources", href: "#footer" }
+            { text: "Events", href: "#events" },
+            { text: "About", href: "#about" }
         ]
     },
 
@@ -32,8 +33,8 @@ const siteConfig = {
             href: "#videos"
         },
         secondaryButton: {
-            text: "Learn More",
-            href: "#about"
+            text: "Meet Us Live",
+            href: "#events"
         },
         codeSnippet: {
             comment: "// AI-powered code generation",
@@ -51,6 +52,12 @@ const siteConfig = {
     videos: {
         title: "Featured Tutorials",
         subtitle: "Learn from expert developers and master AI-powered development tools"
+    },
+
+    // Events section
+    events: {
+        title: "Upcoming Events",
+        subtitle: "Join us at these conferences and meetups around the world"
     },
 
     // About section

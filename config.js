@@ -1,7 +1,20 @@
 // Video Configuration
-// Generated automatically from YouTube URLs
 // Add your YouTube video IDs and details here
 const videoConfig = [
+    {
+        "id": "UcUE2FHQz2Q",
+        "title": "Codepocalypse Now: LangChain4j vs. Spring AI | Dev2Next 2025",
+        "description": "Which Java framework handles AI better: LangChain4j or Spring AI? In this live coding showdown, we'll build a semantic code search application from sc...",
+        "thumbnail": "https://img.youtube.com/vi/UcUE2FHQz2Q/maxresdefault.jpg",
+        "isNew": true
+    },
+    {
+        "id": "IcWW5Ln5CYQ",
+        "title": "RoboCoders: Judgment Day – AI IDEs Face Off | Dev2Next 2025",
+        "description": "Agentic AI-driven IDEs promise cleaner code, faster development, and fewer late-night debugging sessions. But do they really deliver?In this live show...",
+        "thumbnail": "https://img.youtube.com/vi/IcWW5Ln5CYQ/maxresdefault.jpg",
+        "isNew": true
+    },
     {
         "id": "nTC00iE3aNs",
         "title": "Why Your Agents Need Events, Not Endpoints | AgentCon 2025",
@@ -31,18 +44,6 @@ const videoConfig = [
         "title": "Codepocalypse Now: LangChain4j vs. Spring AI | #Devoxx France",
         "description": "Codepocalypse Now: LangChain4j vs. Spring AIWhich Java framework handles AI better: LangChain4j or Spring AI? In this live coding showdown, we’ll buil...",
         "thumbnail": "https://img.youtube.com/vi/lkMhqEyjfXs/maxresdefault.jpg"
-    },
-    {
-        "id": "UcUE2FHQz2Q",
-        "title": "Codepocalypse Now: LangChain4j vs. Spring AI | Dev2Next 2025",
-        "description": "Which Java framework handles AI better: LangChain4j or Spring AI? In this live coding showdown, we’ll build a semantic code search application from sc...",
-        "thumbnail": "https://img.youtube.com/vi/UcUE2FHQz2Q/maxresdefault.jpg"
-    },
-    {
-        "id": "IcWW5Ln5CYQ",
-        "title": "RoboCoders: Judgment Day – AI IDEs Face Off | Dev2Next 2025",
-        "description": "Agentic AI-driven IDEs promise cleaner code, faster development, and fewer late-night debugging sessions. But do they really deliver?In this live show...",
-        "thumbnail": "https://img.youtube.com/vi/IcWW5Ln5CYQ/maxresdefault.jpg"
     }
 ];
 

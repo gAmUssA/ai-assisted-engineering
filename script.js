@@ -3,7 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize the application
     initializeSiteContent();
     initializeVideoGrid();
+    initializeEventsGrid();
     updateVideosSection();
+    updateEventsSection();
     initializeSmoothScrolling();
     initializeModal();
     initializeAnimations();
@@ -205,6 +207,20 @@ function updateVideosSection() {
     }
 }
 
+// Update events section title
+function updateEventsSection() {
+    const eventsTitle = document.querySelector('#events h2');
+    const eventsSubtitle = document.querySelector('#events .section-subtitle');
+    
+    if (eventsTitle && siteConfig.events) {
+        eventsTitle.textContent = siteConfig.events.title;
+    }
+    
+    if (eventsSubtitle && siteConfig.events) {
+        eventsSubtitle.textContent = siteConfig.events.subtitle;
+    }
+}
+
 // Video Grid Initialization
 function initializeVideoGrid() {
     const videoGrid = document.getElementById('videoGrid');
@@ -237,6 +253,7 @@ function createVideoCard(video, index) {
         <div class="video-thumbnail">
             <img src="${video.thumbnail}" alt="${video.title}" loading="lazy">
             <div class="play-button"></div>
+            ${video.isNew ? '<span class="new-badge">New!</span>' : ''}
         </div>
         <div class="video-info">
             <h3 class="video-title">${video.title}</h3>
@@ -246,6 +263,65 @@ function createVideoCard(video, index) {
 
     // Add click event listener
     card.addEventListener('click', () => openVideoModal(video));
+    
+    return card;
+}
+
+// Events Grid Initialization
+function initializeEventsGrid() {
+    const eventsGrid = document.getElementById('eventsGrid');
+    
+    if (!eventsGrid || typeof eventsConfig === 'undefined') {
+        console.error('Events grid or config not found');
+        return;
+    }
+
+    // Clear existing content
+    eventsGrid.innerHTML = '';
+
+    // Generate event cards from config
+    eventsConfig.forEach((event, index) => {
+        const eventCard = createEventCard(event, index);
+        eventsGrid.appendChild(eventCard);
+    });
+}
+
+// Create individual event card
+function createEventCard(event, index) {
+    const card = document.createElement('div');
+    card.className = 'event-card';
+    
+    // Add staggered animation delay
+    card.style.animationDelay = `${index * 0.1}s`;
+    
+    const linkHtml = event.link ? 
+        `<a href="${event.link}" target="_blank" rel="noopener noreferrer" class="event-link">
+            Visit Website <span class="event-link-icon">→</span>
+        </a>` : '';
+    
+    card.innerHTML = `
+        <div class="event-header">
+            <div class="event-flag">${event.flag}</div>
+            <div class="event-date">${event.displayDate}</div>
+        </div>
+        <h3 class="event-name">${event.name}</h3>
+        <div class="event-location">
+            <span class="event-location-icon">📍</span>
+            <span>${event.city}, ${event.country}</span>
+        </div>
+        ${linkHtml}
+    `;
+
+    // Add click event listener for the link
+    if (event.link) {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', (e) => {
+            // Don't trigger if clicking the link itself
+            if (!e.target.closest('.event-link')) {
+                window.open(event.link, '_blank', 'noopener,noreferrer');
+            }
+        });
+    }
     
     return card;
 }
@@ -272,13 +348,15 @@ function initializeSmoothScrolling() {
         });
     });
 
-    // Hero CTA button smooth scroll
-    const heroButton = document.querySelector('.btn-primary');
-    if (heroButton) {
-        heroButton.addEventListener('click', function(e) {
+    // Hero CTA buttons smooth scroll
+    const heroButtons = document.querySelectorAll('.hero-buttons .btn');
+    heroButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
             e.preventDefault();
             
-            const targetSection = document.querySelector('#videos');
+            const targetId = this.getAttribute('href');
+            const targetSection = document.querySelector(targetId);
+            
             if (targetSection) {
                 const offsetTop = targetSection.offsetTop - 80;
                 
@@ -288,7 +366,7 @@ function initializeSmoothScrolling() {
                 });
             }
         });
-    }
+    });
 }
 
 // Modal Functionality
@@ -376,7 +454,7 @@ function initializeAnimations() {
     }, observerOptions);
 
     // Observe elements for animation
-    const animateElements = document.querySelectorAll('.video-card, .feature, .stat');
+    const animateElements = document.querySelectorAll('.video-card, .event-card, .feature, .stat');
     animateElements.forEach(el => {
         observer.observe(el);
     });
