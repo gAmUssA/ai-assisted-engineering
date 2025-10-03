@@ -13,3 +13,9 @@ https://youtu.be/w35WrPfZYxA
 
 # Codepocalyse, Paris 2025
 https://youtu.be/lkMhqEyjfXs
+
+# Codepocalypse Now: LangChain4j vs. Spring AI | Dev2Next 2025
+https://youtu.be/UcUE2FHQz2Q
+
+# RoboCoders: Judgment Day – AI IDEs Face Off | Dev2Next 2025
+https://youtu.be/IcWW5Ln5CYQ
