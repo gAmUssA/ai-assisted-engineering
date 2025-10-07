@@ -24,7 +24,7 @@ function extractVideoId(url) {
     return null;
 }
 
-// Fetch video description from YouTube page
+// Fetch video description and publish date from YouTube page
 async function fetchVideoDescription(videoId) {
     return new Promise((resolve) => {
         const url = `https://www.youtube.com/watch?v=${videoId}`;
@@ -40,23 +40,31 @@ async function fetchVideoDescription(videoId) {
                 try {
                     // Extract description from meta tag
                     const descriptionMatch = data.match(/<meta name="description" content="([^"]*)"[^>]*>/);
+                    let description = null;
                     if (descriptionMatch && descriptionMatch[1]) {
-                        let description = descriptionMatch[1];
+                        description = descriptionMatch[1];
                         // Decode HTML entities
                         description = description.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
                         // Truncate to reasonable length
-                        resolve(description.length > 150 ? description.substring(0, 150) + '...' : description);
-                        return;
+                        description = description.length > 150 ? description.substring(0, 150) + '...' : description;
                     }
-                    resolve(null);
+                    
+                    // Extract publish date from uploadDate meta tag
+                    const dateMatch = data.match(/"uploadDate":"([^"]*)"/) || data.match(/<meta itemprop="uploadDate" content="([^"]*)"[^>]*>/);
+                    let publishDate = null;
+                    if (dateMatch && dateMatch[1]) {
+                        publishDate = dateMatch[1];
+                    }
+                    
+                    resolve({ description, publishDate });
                 } catch (error) {
                     console.warn(`Failed to parse description for ${videoId}:`, error.message);
-                    resolve(null);
+                    resolve({ description: null, publishDate: null });
                 }
             });
         }).on('error', (error) => {
             console.warn(`Failed to fetch description for ${videoId}:`, error.message);
-            resolve(null);
+            resolve({ description: null, publishDate: null });
         });
     });
 }
@@ -65,8 +73,8 @@ async function fetchVideoDescription(videoId) {
 async function fetchVideoMetadata(videoId) {
     return new Promise(async (resolve, reject) => {
         try {
-            // First try to get description
-            const description = await fetchVideoDescription(videoId);
+            // First try to get description and publish date
+            const { description, publishDate } = await fetchVideoDescription(videoId);
             
             // Then get title from oEmbed API
             const oEmbedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
@@ -84,14 +92,16 @@ async function fetchVideoMetadata(videoId) {
                         resolve({
                             title: parsed.title || 'Untitled Video',
                             description: description || 'No description available',
-                            thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+                            thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                            publishDate: publishDate
                         });
                     } catch (error) {
                         console.warn(`Failed to parse metadata for ${videoId}:`, error.message);
                         resolve({
                             title: 'Video Title Unavailable',
                             description: description || 'Description unavailable',
-                            thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+                            thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                            publishDate: publishDate
                         });
                     }
                 });
@@ -100,7 +110,8 @@ async function fetchVideoMetadata(videoId) {
                 resolve({
                     title: 'Video Title Unavailable',
                     description: description || 'Description unavailable',
-                    thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+                    thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                    publishDate: publishDate
                 });
             });
         } catch (error) {
@@ -108,7 +119,8 @@ async function fetchVideoMetadata(videoId) {
             resolve({
                 title: 'Video Title Unavailable',
                 description: 'Description unavailable',
-                thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+                thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                publishDate: null
             });
         }
     });
@@ -175,10 +187,11 @@ async function generateVideoConfig() {
                 id: video.id,
                 title: metadata.title,
                 description: metadata.description,
-                thumbnail: metadata.thumbnail
+                thumbnail: metadata.thumbnail,
+                publishDate: metadata.publishDate
             });
             
-            console.log(`✅ ${metadata.title}`);
+            console.log(`✅ ${metadata.title}${metadata.publishDate ? ' (' + metadata.publishDate.split('T')[0] + ')' : ''}`);
             
             // Add delay to avoid rate limiting
             if (i < videos.length - 1) {
@@ -192,10 +205,32 @@ async function generateVideoConfig() {
                 id: video.id,
                 title: 'Video Title Unavailable',
                 description: 'Description unavailable',
-                thumbnail: `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`
+                thumbnail: `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`,
+                publishDate: null
             });
         }
     }
+    
+    // Sort videos by publish date (most recent first)
+    videoConfig.sort((a, b) => {
+        if (!a.publishDate) return 1;
+        if (!b.publishDate) return -1;
+        return new Date(b.publishDate) - new Date(a.publishDate);
+    });
+    
+    // Mark the 3 most recent videos as new
+    console.log('\n🆕 Marking the 3 most recent videos as new:');
+    for (let i = 0; i < Math.min(3, videoConfig.length); i++) {
+        if (videoConfig[i].publishDate) {
+            videoConfig[i].isNew = true;
+            console.log(`   ${i + 1}. ${videoConfig[i].title} (${videoConfig[i].publishDate.split('T')[0]})`);
+        }
+    }
+    
+    // Remove publishDate from final config (we only needed it for sorting)
+    videoConfig.forEach(video => {
+        delete video.publishDate;
+    });
     
     // Generate JavaScript config file
     const configContent = `// Video Configuration
