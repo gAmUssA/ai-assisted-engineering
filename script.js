@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeSiteContent();
     initializeVideoGrid();
     initializeEventsGrid();
+    initializeMeetExperts();
+    initializeWhyAISection();
     updateVideosSection();
     updateEventsSection();
     initializeSmoothScrolling();
@@ -219,6 +221,118 @@ function updateEventsSection() {
     if (eventsSubtitle && siteConfig.events) {
         eventsSubtitle.textContent = siteConfig.events.subtitle;
     }
+}
+
+// Initialize Why AI Section
+function initializeWhyAISection() {
+    if (!siteConfig.whyAI) return;
+    
+    const whyAITitle = document.querySelector('#why-ai h2');
+    const whyAISubtitle = document.querySelector('#why-ai .section-subtitle');
+    
+    if (whyAITitle) {
+        whyAITitle.textContent = siteConfig.whyAI.title;
+    }
+    
+    if (whyAISubtitle) {
+        whyAISubtitle.textContent = siteConfig.whyAI.subtitle;
+    }
+    
+    // Update stats
+    const statItems = document.querySelectorAll('.why-ai-stats .stat-item');
+    siteConfig.whyAI.content.forEach((item, index) => {
+        if (statItems[index]) {
+            const statNumber = statItems[index].querySelector('.stat-number');
+            const statDescription = statItems[index].querySelector('.stat-description');
+            
+            if (statNumber) statNumber.textContent = item.stat;
+            if (statDescription) statDescription.textContent = item.description;
+        }
+    });
+    
+    // Update callout
+    const callout = document.querySelector('.why-ai-callout p');
+    if (callout) {
+        callout.textContent = siteConfig.whyAI.callout;
+    }
+}
+
+// Initialize Meet Experts Section
+function initializeMeetExperts() {
+    if (!siteConfig.meetExperts) return;
+    
+    const expertsGrid = document.getElementById('expertsGrid');
+    const expertsTitle = document.querySelector('#experts h2');
+    const expertsSubtitle = document.querySelector('#experts .section-subtitle');
+    
+    if (expertsTitle) {
+        expertsTitle.textContent = siteConfig.meetExperts.title;
+    }
+    
+    if (expertsSubtitle) {
+        expertsSubtitle.textContent = siteConfig.meetExperts.subtitle;
+    }
+    
+    if (!expertsGrid) return;
+    
+    // Clear existing content
+    expertsGrid.innerHTML = '';
+    
+    // Generate expert cards
+    siteConfig.meetExperts.experts.forEach((expert, index) => {
+        const expertCard = createExpertCard(expert, index);
+        expertsGrid.appendChild(expertCard);
+    });
+}
+
+// Create individual expert card
+function createExpertCard(expert, index) {
+    const card = document.createElement('div');
+    card.className = 'expert-card';
+    
+    // Add staggered animation delay
+    card.style.animationDelay = `${index * 0.1}s`;
+    
+    const expertiseList = expert.expertise.map(skill => `<span class="expertise-tag">${skill}</span>`).join('');
+    const achievementsList = expert.achievements.map(achievement => `<li>${achievement}</li>`).join('');
+    
+    card.innerHTML = `
+        <div class="expert-header">
+            <div class="expert-photo">
+                <img src="${expert.photo}" alt="${expert.name}" loading="lazy">
+            </div>
+            <div class="expert-info">
+                <h3 class="expert-name">${expert.name}</h3>
+                <div class="expert-title">${expert.title}</div>
+                <div class="expert-company">${expert.company}</div>
+                <div class="expert-location">📍 ${expert.location}</div>
+            </div>
+        </div>
+        <div class="expert-bio">
+            <p>${expert.bio}</p>
+        </div>
+        <div class="expert-expertise">
+            <h4>Expertise:</h4>
+            <div class="expertise-tags">${expertiseList}</div>
+        </div>
+        <div class="expert-achievements">
+            <h4>Key Achievements:</h4>
+            <ul>${achievementsList}</ul>
+        </div>
+        <div class="expert-social">
+            <a href="${expert.social.sessionize}" target="_blank" rel="noopener noreferrer" class="social-link">
+                📅 Speaker Profile
+            </a>
+            <a href="https://twitter.com/${expert.social.twitter.replace('@', '')}" target="_blank" rel="noopener noreferrer" class="social-link">
+                🐦 ${expert.social.twitter}
+            </a>
+            <a href="${expert.social.github}" target="_blank" rel="noopener noreferrer" class="social-link">
+                💻 GitHub
+            </a>
+        </div>
+    `;
+    
+    return card;
 }
 
 // Video Grid Initialization
@@ -454,7 +568,7 @@ function initializeAnimations() {
     }, observerOptions);
 
     // Observe elements for animation
-    const animateElements = document.querySelectorAll('.video-card, .event-card, .feature, .stat');
+    const animateElements = document.querySelectorAll('.video-card, .event-card, .feature, .stat, .expert-card, .stat-item');
     animateElements.forEach(el => {
         observer.observe(el);
     });
@@ -647,13 +761,13 @@ function trackVideoPlay(videoId, videoTitle) {
 // Add CSS animations dynamically
 const style = document.createElement('style');
 style.textContent = `
-    .video-card {
+    .video-card, .expert-card {
         opacity: 0;
         transform: translateY(30px);
         transition: all 0.6s ease;
     }
     
-    .video-card.animate-in {
+    .video-card.animate-in, .expert-card.animate-in {
         opacity: 1;
         transform: translateY(0);
     }
@@ -669,13 +783,13 @@ style.textContent = `
         transform: translateX(0);
     }
     
-    .stat {
+    .stat, .stat-item {
         opacity: 0;
         transform: scale(0.8);
         transition: all 0.6s ease;
     }
     
-    .stat.animate-in {
+    .stat.animate-in, .stat-item.animate-in {
         opacity: 1;
         transform: scale(1);
     }
