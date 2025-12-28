@@ -33,27 +33,120 @@ jobs:
       with:
         node-version: '18'
         
-    - name: 🎥 Verify config.js exists with video metadata
+    - name: 🧪 Run tests
       run: |
-        echo "🔍 Checking config.js..."
-        if [ -f "config.js" ]; then
-          echo "✅ Found config.js, checking for video data..."
-          if grep -q "videoConfig" config.js; then
-            echo "✅ Video configuration found in config.js"
-            # Show first video title to verify content
-            grep -A 2 "title" config.js | head -3
+        echo "🧪 Running test suite..."
+        
+        # Run core functionality tests
+        echo "📋 Running core functionality tests..."
+        if [ -f "tests/test-core-functionality.js" ]; then
+          node tests/test-core-functionality.js
+          if [ $? -eq 0 ]; then
+            echo "✅ Core functionality tests passed"
           else
-            echo "⚠️ No video configuration found, generating from URLs..."
-            if [ -f "urls.txt" ]; then
-              node generate-video-config.js
+            echo "❌ Core functionality tests failed"
+            exit 1
+          fi
+        else
+          echo "⚠️ Core functionality tests not found"
+        fi
+        
+        # Run YouTube API tests (only if API key is available)
+        echo "🔑 Running YouTube API tests..."
+        if [ -f "tests/test-youtube-api.js" ]; then
+          if [ -n "$YOUTUBE_API_KEY" ]; then
+            node tests/test-youtube-api.js
+            if [ $? -eq 0 ]; then
+              echo "✅ YouTube API tests passed"
+            else
+              echo "❌ YouTube API tests failed"
+              exit 1
             fi
+          else
+            echo "⚠️ Skipping YouTube API tests - no API key available"
+          fi
+        else
+          echo "⚠️ YouTube API tests not found"
+        fi
+        
+        echo "🎉 All tests completed successfully!"
+      env:
+        YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        
+    - name: 🎥 Generate video configuration with YouTube Data API v3
+      env:
+        YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      run: |
+        echo "🔍 Checking video configuration..."
+        
+        # Check if config.js exists and has recent video data
+        if [ -f "config.js" ]; then
+          echo "✅ Found existing config.js"
+          
+          # Check if config has video data
+          if grep -q "videoConfig" config.js && grep -q "title" config.js; then
+            echo "✅ Video configuration found in config.js"
+            
+            # Show video count and first video for verification
+            video_count=$(grep -c '"id":' config.js || echo "0")
+            echo "📊 Found $video_count videos in config"
+            
+            if [ "$video_count" -gt 0 ]; then
+              echo "📹 First video:"
+              grep -A 2 '"title":' config.js | head -3 | sed 's/^/   /'
+            fi
+          else
+            echo "⚠️ config.js exists but has no video data, regenerating..."
+            REGENERATE=true
           fi
         else
           echo "❌ config.js not found, generating from URLs..."
+          REGENERATE=true
+        fi
+        
+        # Generate config if needed
+        if [ "$REGENERATE" = "true" ]; then
           if [ -f "urls.txt" ]; then
-            node generate-video-config.js
+            echo "🔄 Generating video configuration from urls.txt..."
+            
+            if [ -n "$YOUTUBE_API_KEY" ]; then
+              echo "🔑 YouTube API key found, using YouTube Data API v3..."
+              node generate-video-config.js
+              
+              # Verify generation was successful
+              if [ -f "config.js" ] && grep -q "videoConfig" config.js; then
+                video_count=$(grep -c '"id":' config.js || echo "0")
+                echo "✅ Successfully generated config.js with $video_count videos"
+              else
+                echo "❌ Failed to generate config.js with API"
+                exit 1
+              fi
+            else
+              echo "⚠️ No YouTube API key found in secrets"
+              echo "💡 Please add YOUTUBE_API_KEY to repository secrets"
+              echo "🔄 Creating fallback config with placeholder data..."
+              
+              # Create a basic fallback config
+              cat > config.js << 'EOF'
+// Video Configuration - Fallback (API key not available)
+const videoConfig = [
+    {
+        "id": "placeholder",
+        "title": "Video Configuration Unavailable", 
+        "description": "YouTube API key not configured. Please add YOUTUBE_API_KEY to repository secrets.",
+        "thumbnail": "https://via.placeholder.com/480x360?text=API+Key+Required"
+    }
+];
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = videoConfig;
+}
+EOF
+              echo "⚠️ Created fallback config - site will deploy but videos won't work properly"
+            fi
           else
-            echo "❌ No urls.txt found either, deployment may fail"
+            echo "❌ No urls.txt found - cannot generate video configuration"
+            exit 1
           fi
         fi
         
@@ -80,3 +173,36 @@ jobs:
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # Post-deployment verification
+  post-deploy-tests:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: 📂 Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: 🔍 Post-deployment verification
+        run: |
+          echo "🔍 Running post-deployment verification..."
+          
+          # Run basic functionality tests to ensure deployment is working
+          if [ -f "tests/test-core-functionality.js" ]; then
+            echo "📋 Verifying core functionality after deployment..."
+            node tests/test-core-functionality.js
+            if [ $? -eq 0 ]; then
+              echo "✅ Post-deployment verification passed"
+            else
+              echo "❌ Post-deployment verification failed"
+              exit 1
+            fi
+          else
+            echo "⚠️ Core functionality tests not found for verification"
+          fi
+          
+          echo "🎉 Deployment verification completed successfully!"
