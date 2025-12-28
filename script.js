@@ -347,11 +347,113 @@ function initializeVideoGrid() {
     // Clear existing content
     videoGrid.innerHTML = '';
 
-    // Generate video cards directly from config (descriptions already fetched)
+    // Limit to maximum 6 videos for the grid
+    const maxVideos = 6;
+    const videosToShow = videoConfig.slice(0, maxVideos);
+    const hasMoreVideos = videoConfig.length > maxVideos;
+
+    // Generate video cards for the limited set
+    videosToShow.forEach((video, index) => {
+        const videoCard = createVideoCard(video, index);
+        videoGrid.appendChild(videoCard);
+        
+        // Add animation class immediately for dynamically added cards
+        setTimeout(() => {
+            videoCard.classList.add('animate-in');
+        }, index * 50); // Stagger the animations
+    });
+
+    // Remove any existing view-all container
+    const existingViewAll = document.querySelector('.view-all-container');
+    if (existingViewAll) {
+        existingViewAll.remove();
+    }
+
+    // Add "View all tutorials" link if there are more videos
+    if (hasMoreVideos) {
+        const viewAllContainer = document.createElement('div');
+        viewAllContainer.className = 'view-all-container';
+        
+        const viewAllLink = document.createElement('a');
+        viewAllLink.href = '#';
+        viewAllLink.className = 'view-all-link';
+        viewAllLink.innerHTML = `
+            View all tutorials (${videoConfig.length})
+            <svg class="view-all-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+        `;
+        
+        // Add click handler to show all videos
+        viewAllLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAllVideos();
+        });
+        
+        viewAllContainer.appendChild(viewAllLink);
+        
+        // Insert after the video grid
+        videoGrid.parentNode.insertBefore(viewAllContainer, videoGrid.nextSibling);
+    }
+}
+
+// Function to show all videos
+function showAllVideos() {
+    const videoGrid = document.getElementById('videoGrid');
+    const viewAllContainer = document.querySelector('.view-all-container');
+    
+    if (!videoGrid) {
+        console.error('Video grid not found');
+        return;
+    }
+    
+    console.log('Showing all videos, total:', videoConfig.length);
+    
+    // Clear existing content
+    videoGrid.innerHTML = '';
+    
+    // Show all videos
     videoConfig.forEach((video, index) => {
         const videoCard = createVideoCard(video, index);
         videoGrid.appendChild(videoCard);
+        
+        // Add animation class immediately for dynamically added cards
+        setTimeout(() => {
+            videoCard.classList.add('animate-in');
+        }, index * 50); // Stagger the animations
     });
+    
+    // Remove the "View all" link
+    if (viewAllContainer) {
+        viewAllContainer.remove();
+    }
+    
+    // Add "Show less" link
+    const showLessContainer = document.createElement('div');
+    showLessContainer.className = 'view-all-container';
+    
+    const showLessLink = document.createElement('a');
+    showLessLink.href = '#';
+    showLessLink.className = 'view-all-link';
+    showLessLink.innerHTML = `
+        Show featured tutorials
+        <svg class="view-all-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+        </svg>
+    `;
+    
+    // Add click handler to show limited videos again
+    showLessLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        initializeVideoGrid();
+    });
+    
+    showLessContainer.appendChild(showLessLink);
+    
+    // Insert the "Show less" container after the video grid
+    videoGrid.parentNode.insertBefore(showLessContainer, videoGrid.nextSibling);
+    
+    console.log('Added show less link');
 }
 
 // Create individual video card
