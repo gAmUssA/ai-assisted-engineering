@@ -127,21 +127,19 @@ jobs:
               echo "🔄 Creating fallback config with placeholder data..."
               
               # Create a basic fallback config
-              cat > config.js << 'EOF'
-// Video Configuration - Fallback (API key not available)
-const videoConfig = [
-    {
-        "id": "placeholder",
-        "title": "Video Configuration Unavailable", 
-        "description": "YouTube API key not configured. Please add YOUTUBE_API_KEY to repository secrets.",
-        "thumbnail": "https://via.placeholder.com/480x360?text=API+Key+Required"
-    }
-];
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = videoConfig;
-}
-EOF
+              echo '// Video Configuration - Fallback (API key not available)' > config.js
+              echo 'const videoConfig = [' >> config.js
+              echo '    {' >> config.js
+              echo '        "id": "placeholder",' >> config.js
+              echo '        "title": "Video Configuration Unavailable",' >> config.js
+              echo '        "description": "YouTube API key not configured. Please add YOUTUBE_API_KEY to repository secrets.",' >> config.js
+              echo '        "thumbnail": "https://via.placeholder.com/480x360?text=API+Key+Required"' >> config.js
+              echo '    }' >> config.js
+              echo '];' >> config.js
+              echo '' >> config.js
+              echo 'if (typeof module !== "undefined" && module.exports) {' >> config.js
+              echo '    module.exports = videoConfig;' >> config.js
+              echo '}' >> config.js
               echo "⚠️ Created fallback config - site will deploy but videos won't work properly"
             fi
           else
