@@ -293,8 +293,11 @@ function createExpertCard(expert, index) {
     // Add staggered animation delay
     card.style.animationDelay = `${index * 0.1}s`;
     
-    const expertiseList = expert.expertise.map(skill => `<span class="expertise-tag">${skill}</span>`).join('');
-    const achievementsList = expert.achievements.map(achievement => `<li>${achievement}</li>`).join('');
+    // Limit bio to 280 characters maximum
+    const truncatedBio = truncateText(expert.bio, 280);
+    
+    // Build social media icons
+    const socialIcons = buildSocialIcons(expert.social);
     
     card.innerHTML = `
         <div class="expert-header">
@@ -304,35 +307,76 @@ function createExpertCard(expert, index) {
             <div class="expert-info">
                 <h3 class="expert-name">${expert.name}</h3>
                 <div class="expert-title">${expert.title}</div>
-                <div class="expert-company">${expert.company}</div>
-                <div class="expert-location">📍 ${expert.location}</div>
+                <p class="expert-company">${expert.company}</p>
             </div>
         </div>
         <div class="expert-bio">
-            <p>${expert.bio}</p>
-        </div>
-        <div class="expert-expertise">
-            <h4>Expertise:</h4>
-            <div class="expertise-tags">${expertiseList}</div>
-        </div>
-        <div class="expert-achievements">
-            <h4>Key Achievements:</h4>
-            <ul>${achievementsList}</ul>
+            <p>${truncatedBio}</p>
         </div>
         <div class="expert-social">
-            <a href="${expert.social.sessionize}" target="_blank" rel="noopener noreferrer" class="social-link">
-                📅 Speaker Profile
-            </a>
-            <a href="https://twitter.com/${expert.social.twitter.replace('@', '')}" target="_blank" rel="noopener noreferrer" class="social-link">
-                🐦 ${expert.social.twitter}
-            </a>
-            <a href="${expert.social.github}" target="_blank" rel="noopener noreferrer" class="social-link">
-                💻 GitHub
-            </a>
+            ${socialIcons}
         </div>
+        <a href="${expert.social.sessionize}" target="_blank" rel="noopener noreferrer" class="expert-talks-link">
+            Watch their talks <span class="talks-arrow">→</span>
+        </a>
     `;
     
     return card;
+}
+
+// Truncate text to specified character limit
+function truncateText(text, maxLength) {
+    if (!text || text.length <= maxLength) {
+        return text || '';
+    }
+    // Find the last space before maxLength to avoid cutting words
+    const truncated = text.substring(0, maxLength);
+    const lastSpace = truncated.lastIndexOf(' ');
+    if (lastSpace > maxLength - 20) {
+        return truncated.substring(0, lastSpace) + '...';
+    }
+    return truncated + '...';
+}
+
+// Build social media icon links
+function buildSocialIcons(social) {
+    const icons = [];
+    
+    // Twitter/X icon
+    if (social.twitter) {
+        const twitterHandle = social.twitter.replace('@', '');
+        icons.push(`
+            <a href="https://twitter.com/${twitterHandle}" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Twitter/X">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+            </a>
+        `);
+    }
+    
+    // GitHub icon
+    if (social.github) {
+        icons.push(`
+            <a href="${social.github}" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="GitHub">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+            </a>
+        `);
+    }
+    
+    // Sessionize/Speaker icon
+    if (social.sessionize) {
+        icons.push(`
+            <a href="${social.sessionize}" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Speaker Profile">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zM9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
+                </svg>
+            </a>
+        `);
+    }
+    
+    return icons.join('');
 }
 
 // Video Grid Initialization
@@ -494,6 +538,13 @@ function initializeEventsGrid() {
 
     // Clear existing content
     eventsGrid.innerHTML = '';
+    
+    // Apply centered layout class when only 2 events are available
+    if (eventsConfig.length === 2) {
+        eventsGrid.classList.add('events-grid--centered');
+    } else {
+        eventsGrid.classList.remove('events-grid--centered');
+    }
 
     // Generate event cards from config
     eventsConfig.forEach((event, index) => {
