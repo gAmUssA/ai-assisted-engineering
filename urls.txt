@@ -96,3 +96,19 @@ https://youtu.be/POQRgUmTtGQ
 
 # Building Schema Registry Claude Skill | #SkillClinic (livestream)
 https://youtu.be/DrQ6J0ntrxo
+
+# RoboCoders: Judgment Day — WeAreDevelopers North America 2026 (September 24)
+# Source: https://speaking.gamov.io/talks/2026-09-24-wearedevelopers-congress-north-robocoders-judgment-day/
+https://youtu.be/DZSrePBL2Lg
+
+# Codepocalypse Now: LangChain4j vs JetBrains Koog — IntelliJ IDEA Conf 2026 (September 8)
+# Source: https://speaking.jbaru.ch/talks/ideaconf-2026-codepocalypse/
+https://youtu.be/BMCbNltyyxM
+
+# The Missing Protocol: How MCP Bridges LLMs and Data Streams — Amsterdam JUG (September 7, 2026)
+# Source: https://speaking.gamov.io/talks/2026-09-07-amsterdam-jug-missing-protocol-mcp-bridges-llms-data-streams/
+https://youtu.be/oEfHmHD-ov4
+
+# Never Trust a Monkey — Voxxed Days Luxembourg 2026 (June 18)
+# Source: https://speaking.jbaru.ch/talks/voxxed-lu-2026-monkey/
+https://youtu.be/siomFk8BRHE
