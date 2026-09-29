@@ -141,8 +141,8 @@ function updateAboutSection() {
     });
     
     // Update stats
-    const statNumbers = document.querySelectorAll('.stat-number');
-    const statLabels = document.querySelectorAll('.stat-label');
+    const statNumbers = document.querySelectorAll('#about .stats-card .stat-number');
+    const statLabels = document.querySelectorAll('#about .stats-card .stat-label');
     
     siteConfig.about.stats.forEach((stat, index) => {
         if (statNumbers[index]) statNumbers[index].textContent = stat.number;
