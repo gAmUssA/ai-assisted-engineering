@@ -28,7 +28,7 @@ const siteConfig = {
     hero: {
         title: "Master AI-Assisted",
         titleHighlight: "Engineering",
-        subtitle: "Join thousands of developers who've already transformed their workflow. Learn the tools, techniques, and strategies that are reshaping software development in 2025.",
+        subtitle: "Explore AI-assisted development through conference talks, live demos, and practical examples. Learn how to test generated code and evaluate what works for your project.",
         description: "From GitHub Copilot to Windsurf and Cursor, master the AI tools that are becoming essential for modern development. Get hands-on tutorials, real-world examples, and expert insights.",
         primaryButton: {
             text: "Watch Tutorials",
@@ -43,7 +43,7 @@ const siteConfig = {
             lines: [
                 "const aiAssisted = new Developer({",
                 "  tools: ['copilot', 'windsurf', 'cursor'],",
-                "  productivity: 'exponential',",
+                "  validation: 'tests-and-review',",
                 "  learning: 'accelerated'",
                 "});"
             ]
@@ -65,22 +65,22 @@ const siteConfig = {
     // Why AI section (new)
     whyAI: {
         title: "Why AI-Assisted Engineering Matters",
-        subtitle: "The development landscape is evolving rapidly. Stay ahead of the curve.",
+        subtitle: "Use AI tools with clear intent, repeatable checks, and evidence from your own work.",
         content: [
             {
-                stat: "73%",
-                description: "of developers report increased productivity with AI coding assistants"
+                stat: "Specify",
+                description: "Define the intended behavior before asking an agent to implement it."
             },
             {
-                stat: "40%",
-                description: "reduction in time spent on repetitive coding tasks"
+                stat: "Verify",
+                description: "Review generated code and check it with tests that exercise real behavior."
             },
             {
-                stat: "2025",
-                description: "is the year AI becomes essential for competitive development"
+                stat: "Measure",
+                description: "Compare task completion, review effort, and defects against a baseline."
             }
         ],
-        callout: "Don't get left behind. The future of software development is AI-assisted, and the time to adapt is now."
+        callout: "Results depend on the task, codebase, and review process. These talks demonstrate techniques and tradeoffs; they do not promise a universal productivity gain."
     },
 
     // About section
@@ -91,12 +91,12 @@ const siteConfig = {
             {
                 icon: "🚀",
                 title: "Accelerate Development",
-                description: "Cut development time in half with intelligent code suggestions, automated refactoring, and context-aware completions that understand your entire codebase."
+                description: "Explore code suggestions, refactoring, and context-aware assistance. Validate the result against your project's requirements and tests."
             },
             {
                 icon: "🧠",
                 title: "Intelligent Problem Solving",
-                description: "Get instant solutions to complex coding challenges. AI assistants analyze your code, suggest optimizations, and help debug issues before they become problems."
+                description: "Use AI assistants to explore debugging hypotheses and implementation options, then check those suggestions against the code and its behavior."
             },
             {
                 icon: "📚",
@@ -110,8 +110,8 @@ const siteConfig = {
             },
             {
                 icon: "⚡",
-                title: "Instant Expertise",
-                description: "Access expert-level knowledge instantly. Whether you're working with new frameworks or debugging complex systems, AI assistance levels the playing field."
+                title: "Explore and Validate",
+                description: "Use AI assistance to explore unfamiliar frameworks and systems. Check its advice against documentation and working examples."
             },
             {
                 icon: "🎯",
@@ -121,16 +121,16 @@ const siteConfig = {
         ],
         stats: [
             {
-                number: "10x",
-                label: "Faster Development"
+                number: "Context",
+                label: "Intent before implementation"
             },
             {
-                number: "90%",
-                label: "Fewer Bugs"
+                number: "Tests",
+                label: "Behavior before confidence"
             },
             {
-                number: "50+",
-                label: "AI Tools Covered"
+                number: "Review",
+                label: "Evidence before release"
             }
         ]
     },

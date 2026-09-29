@@ -3,25 +3,49 @@
 // Add your YouTube video IDs and details here
 const videoConfig = [
     {
+        "id": "DZSrePBL2Lg",
+        "title": "RoboCoders: Judgment Day: AI-Assisted Engineering Applied - The Battle of Agents",
+        "description": "Agentic AI-assisted engineering tools promise cleaner code, faster development, and fewer late-night debugging sessions. But do they truly deliver?\nIn...",
+        "thumbnail": "https://i.ytimg.com/vi/DZSrePBL2Lg/maxresdefault.jpg",
+        "isNew": true
+    },
+    {
+        "id": "oEfHmHD-ov4",
+        "title": "The Missing Protocol: How MCP Bridges LLMs and Data Streams | Amsterdam JUG September 2026",
+        "description": "Nobody’s talking about this: MCP isn’t just another way to build chatbots. It’s the bridge we’ve been missing between AI reasoning and real-time data...",
+        "thumbnail": "https://i.ytimg.com/vi/oEfHmHD-ov4/maxresdefault.jpg",
+        "isNew": true
+    },
+    {
+        "id": "BMCbNltyyxM",
+        "title": "Codepocalypse Now: LangChain4j vs JetBrains Koog | IntelliJ IDEA Conf 2026",
+        "description": "Baruch Sadogursky and Viktor Gamov build j-claw in JetBrains Koog and LangChain4j Agentic, using one recurring challenge: getting out of mandatory AI...",
+        "thumbnail": "https://i.ytimg.com/vi/BMCbNltyyxM/maxresdefault.jpg",
+        "isNew": true
+    },
+    {
+        "id": "siomFk8BRHE",
+        "title": "Never Trust a Monkey: The Chasm, the Craft, and the Chain of AI-Assisted Code at Voxxed Luxembourg",
+        "description": "Four hours of work, glowing metrics, \"amazing code coverage\"… and the app doesn't run. We have a trust problem with AI-generated code — and it's not...",
+        "thumbnail": "https://i.ytimg.com/vi/siomFk8BRHE/maxresdefault.jpg"
+    },
+    {
         "id": "y85Xxx-vWZw",
         "title": "The Missing Protocol: How MCP Bridges LLMs and Data Streams | Lisbon Kafka Meetup",
         "description": "Nobody's talking about this: MCP isn't just another way to build chatbots. It's the bridge we've been missing between AI reasoning and real-time data...",
-        "thumbnail": "https://i.ytimg.com/vi/y85Xxx-vWZw/maxresdefault.jpg",
-        "isNew": true
+        "thumbnail": "https://i.ytimg.com/vi/y85Xxx-vWZw/maxresdefault.jpg"
     },
     {
         "id": "T3I15mNEwUQ",
         "title": "Codepocalypse Now: LangChain4j vs. Koog | JNation 2026",
         "description": "Which Java framework handles AI better: LangChain4j or Koog? \nIn this live coding showdown, we’ll build a semantic code search application from...",
-        "thumbnail": "https://i.ytimg.com/vi/T3I15mNEwUQ/maxresdefault.jpg",
-        "isNew": true
+        "thumbnail": "https://i.ytimg.com/vi/T3I15mNEwUQ/maxresdefault.jpg"
     },
     {
         "id": "T6PCF0s57fg",
         "title": "The Missing Protocol: How MCP Bridges LLMs and Data Streams | Foobar.io Athens",
         "description": "Nobody’s talking about this: MCP isn’t just another way to build chatbots. It’s the bridge we’ve been missing between AI reasoning and real-time data...",
-        "thumbnail": "https://i.ytimg.com/vi/T6PCF0s57fg/maxresdefault.jpg",
-        "isNew": true
+        "thumbnail": "https://i.ytimg.com/vi/T6PCF0s57fg/maxresdefault.jpg"
     },
     {
         "id": "1HPygt1_9z8",
@@ -110,7 +134,7 @@ const videoConfig = [
     {
         "id": "vXdT-KGxz-E",
         "title": "Can We Trust AI-Generated Code? | Baruch Sadogursky & Leonid Igolnik, AI By the Bay25",
-        "description": "Can We Trust Al-Generated Code? Maybe We've Been Asking the Wrong Question.\n\nNo one trusts AI-generated code. It looks right. It sounds confident. But...",
+        "description": "This talk video is a node in devreal.ai, the developer community graph.\nIt connects to:\nTalk: Can We Trust Al-Generated Code? Maybe We've Been Asking...",
         "thumbnail": "https://i.ytimg.com/vi/vXdT-KGxz-E/maxresdefault.jpg"
     },
     {
